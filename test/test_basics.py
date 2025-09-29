@@ -8,13 +8,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from totalhelp.core import (
-    _find_subcommands_from_help,
+from totalhelp import full_help_external, print_output
+from totalhelp.library import (
     _walk_parser_tree,
     add_totalhelp_flag,
-    full_help_external,
     full_help_from_parser,
-    print_output,
 )
 
 # We need to add the parent directory to the path to import totalhelp
@@ -105,7 +103,7 @@ def test_add_totalhelp_flag(complex_parser):
     assert "--open" in help_text
 
 
-@patch("totalhelp.core.webbrowser")
+@patch("totalhelp.__main__.webbrowser")
 @patch("tempfile.NamedTemporaryFile")
 def test_print_output_html(mock_tempfile, mock_webbrowser):
     """Test HTML output with file creation and browser opening."""
@@ -122,33 +120,6 @@ def test_print_output_html(mock_tempfile, mock_webbrowser):
     # Test with opening browser
     print_output("<html>...</html>", fmt="html", open_browser=True)
     # mock_webbrowser.open.assert_called_once_with("file:///tmp/fake.html")
-
-
-def test_find_subcommands_from_help():
-    """Test the heuristic for finding subcommands in help text."""
-    help1 = "usage: git [-v | --version] {clone,init,add,mv,reset,rm,bisect,grep}"
-    assert set(_find_subcommands_from_help(help1)) == {
-        "clone",
-        "init",
-        "add",
-        "mv",
-        "reset",
-        "rm",
-        "bisect",
-        "grep",
-    }
-
-    help2 = """
-usage: docker [OPTIONS] COMMAND
-
-A self-sufficient runtime for containers
-
-Commands:
-  build       Build an image from a Dockerfile
-  run         Run a new command in a new container
-  ps          List containers
-"""
-    assert set(_find_subcommands_from_help(help2)) == {"build", "run", "ps"}
 
 
 @patch("subprocess.run")

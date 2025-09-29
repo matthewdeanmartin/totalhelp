@@ -27,7 +27,7 @@ clean: clean-pyc clean-test
 
 # tests can't be expected to pass if dependencies aren't installed.
 # tests are often slow and linting is fast, so run tests on linted code.
-test: clean uv.lock install_plugins
+test: clean uv.lock
 	@echo "Running unit tests"
 	# $(VENV) pytest --doctest-modules totalhelp
 	# $(VENV) python -m unittest discover
