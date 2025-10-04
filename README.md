@@ -5,6 +5,14 @@ An implementation of the totalhelp PEP.
 This module provides monolithic help output for Python argparse
 applications, including those with deeply nested subcommands.
 
+[![tests](https://github.com/matthewdeanmartin/totalhelp/actions/workflows/build.yml/badge.svg)
+](https://github.com/matthewdeanmartin/totalhelp/actions/workflows/tests.yml)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/matthewdeanmartin/totalhelp/main.svg)
+](https://results.pre-commit.ci/latest/github/matthewdeanmartin/totalhelp/main)
+[![Downloads](https://img.shields.io/pypi/dm/totalhelp)](https://pypistats.org/packages/totalhelp)
+[![Python Version](https://img.shields.io/pypi/pyversions/totalhelp)
+![Release](https://img.shields.io/pypi/v/totalhelp)
+](https://pypi.org/project/totalhelp/)
 
 ## Usage
 
