@@ -103,7 +103,7 @@ def _render_html(nodes: List[_ParserNode], prog: str) -> str:
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Superhelp for {prog}</title>
+            <title>totalhelp for {prog}</title>
             <style>{css}</style>
         </head>
         <body>

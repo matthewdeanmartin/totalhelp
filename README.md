@@ -5,6 +5,21 @@ An implementation of the totalhelp PEP.
 This module provides monolithic help output for Python argparse
 applications, including those with deeply nested subcommands.
 
+
+## Usage
+
+Works best with python tools that use Argparse. 
+
+```bash
+totalhelp llm
+totalhelp pipx
+```
+
+Caveats
+
+- Help text is not a standard parsable format, so discovery of command names may fail.
+- Can surface problems with applications that have slow startup.
+
 ## Features
 
 - Monolithic Help: Generate a single help document

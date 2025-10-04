@@ -1,6 +1,6 @@
 [project]
 name = "totalhelp"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     { name = "Matthew Dean Martin", email = "matthewdeanmartin@gmail.com" },
 ]
@@ -24,12 +24,13 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Terminals",
 ]
-dependencies = []
+dependencies = [
+    "rich>=10.0.0",
+    "rich-argparse>=1.0.0",
+]
 
 [project.optional-dependencies]
 rich = [
-    "rich>=10.0.0",
-    "rich-argparse>=1.0.0",
 ]
 
 [project.urls]

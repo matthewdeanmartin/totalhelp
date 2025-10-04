@@ -62,10 +62,10 @@ def print_output(
 
 
 def main() -> None:
-    """Console script entry point for superhelp."""
-    # This parser is for the `superhelp` command itself.
+    """Console script entry point for totalhelp."""
+    # This parser is for the `totalhelp` command itself.
     parser = argparse.ArgumentParser(
-        prog="superhelp",
+        prog="totalhelp",
         description="Generate monolithic help for an external command by recursively calling its --help flag.",
         # epilog="If no command is provided, it will attempt to inspect 'python'.",
         formatter_class=RichHelpFormatter,

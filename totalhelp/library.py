@@ -26,7 +26,7 @@ except ImportError:
 def add_totalhelp_flag(
     parser: argparse.ArgumentParser,
     *,
-    option_strings: tuple[str, ...] = ("--totalhelp", "--superhelp"),
+    option_strings: tuple[str, ...] = ("--totalhelp", "--totalhelp"),
     add_format_options: bool = True,
     add_open_option: bool = True,
 ) -> None:
@@ -37,12 +37,12 @@ def add_totalhelp_flag(
 
     Args:
         parser: The `ArgumentParser` instance to modify.
-        option_strings: The flag(s) to trigger superhelp (e.g., `("--totalhelp",)`).
+        option_strings: The flag(s) to trigger totalhelp (e.g., `("--totalhelp",)`).
         add_format_options: If True, adds a `--format` argument.
         add_open_option: If True, adds an `--open` argument for HTML mode.
     """
     # Use a group to keep the help output clean.
-    group = parser.add_argument_group("SuperHelp Options")
+    group = parser.add_argument_group("totalhelp Options")
 
     group.add_argument(
         *option_strings,

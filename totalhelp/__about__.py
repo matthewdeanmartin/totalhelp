@@ -10,7 +10,7 @@ __all__ = [
 ]
 
 __title__ = "totalhelp"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __description__ = (
     "Print help for all commands and subcommands for argparse applications"
 )

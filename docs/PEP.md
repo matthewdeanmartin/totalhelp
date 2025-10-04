@@ -8,19 +8,19 @@
 * **Type:** Standards Track (Packaging/Library Convention)
 * **Created:** 2025-09-28
 * **Target Python Version:** 3.8+
-* **Requires:** None (optional extra: `superhelp[rich]`)
+* **Requires:** None (optional extra: `totalhelp[rich]`)
 * **Discussions-To:** TBD
 
 ---
 
 ## Abstract
 
-This PEP specifies an optional, library-only module **`superhelp`** that augments Python’s `argparse`-based CLIs with *monolithic* help output. It provides:
+This PEP specifies an optional, library-only module **`totalhelp`** that augments Python’s `argparse`-based CLIs with *monolithic* help output. It provides:
 
 1. A programmatic API to render help for **all** subcommands (and nested sub-subcommands) in a single document.
-2. An opt-in CLI flag (e.g., `--totalhelp` / `--superhelp`) that application authors can expose without subclassing or replacing their existing parser.
+2. An opt-in CLI flag (e.g., `--totalhelp` / `--totalhelp`) that application authors can expose without subclassing or replacing their existing parser.
 3. Multiple output formats: plain text, Markdown, and single-file HTML (with an optional browser opener).
-4. An optional integration with `rich-argparse` via an **extras** dependency (`superhelp[rich]`), preserving zero-dependency defaults.
+4. An optional integration with `rich-argparse` via an **extras** dependency (`totalhelp[rich]`), preserving zero-dependency defaults.
 
 The module is non-invasive (no base classes), opt-in, and compatible with existing `argparse` applications.
 
@@ -39,7 +39,7 @@ A standard, reusable module helps:
 * **Drop-in:** Work with any existing `argparse.ArgumentParser` without subclassing or refactoring. Authors opt-in by calling a function and/or adding a flag.
 * **Accurate:** Traverse the actual parser/subparser objects rather than heuristically scraping terminal output (though a best-effort external mode is included for third-party commands the author does not control).
 * **Format-neutral:** Produce text, Markdown, or HTML from the same traversal.
-* **Optional Richness:** If users install `superhelp[rich]`, offer enhanced terminal rendering and better integration with `rich-argparse` formatting.
+* **Optional Richness:** If users install `totalhelp[rich]`, offer enhanced terminal rendering and better integration with `rich-argparse` formatting.
 * **Safety:** Avoid executing arbitrary code paths; when external inspection is used, sandbox shell-outs with timeouts and depth limits.
 
 Non-goals:
@@ -55,7 +55,7 @@ Non-goals:
 * **Node**: A parser or subparser in the tree.
 * **Path**: Command tokens from root to a node (e.g., `git remote add`).
 
-### Public API (module `superhelp`)
+### Public API (module `totalhelp`)
 
 The module exports the following functions; all are importable and do **not** require subclassing:
 
@@ -65,12 +65,12 @@ Traverses `parser` and all nested subparsers to produce a single document contai
 
 * **`prog`**: override program name shown at the root (defaults to `parser.prog`).
 * **`fmt`**: output format (`text` | `md` | `html`).
-* **`rich`**: if `True`, and `superhelp[rich]` is installed and a TTY is detected, include richer styling for the *root* text rendering (best-effort; Markdown/HTML unaffected). If `None`, auto-detect.
+* **`rich`**: if `True`, and `totalhelp[rich]` is installed and a TTY is detected, include richer styling for the *root* text rendering (best-effort; Markdown/HTML unaffected). If `None`, auto-detect.
 * **`width`**: optional wrapping width for plain text mode; default mirrors `argparse` behavior.
 
-#### 2. `add_totalhelp_flag(parser: argparse.ArgumentParser, *, option_strings: tuple[str, ...] = ("--totalhelp", "--superhelp"), add_format_options: bool = True, add_open_option: bool = True) -> None`
+#### 2. `add_totalhelp_flag(parser: argparse.ArgumentParser, *, option_strings: tuple[str, ...] = ("--totalhelp", "--totalhelp"), add_format_options: bool = True, add_open_option: bool = True) -> None`
 
-Augments an existing parser by adding a boolean flag (default aliases `--totalhelp` and `--superhelp`). When present in parsed args, calling code can generate and print full help and exit.
+Augments an existing parser by adding a boolean flag (default aliases `--totalhelp` and `--totalhelp`). When present in parsed args, calling code can generate and print full help and exit.
 
 * If **`add_format_options`** is true, also adds `--format {text,md,html}`.
 * If **`add_open_option`** is true, adds `--open` (HTML mode only) to open a temporary file in a web browser.
@@ -93,8 +93,8 @@ Best-effort external discovery using `command + ["--help"]` to parse subcommand 
 
    ```python
    if args.totalhelp:
-       doc = superhelp.full_help_from_parser(parser, fmt=args.format)
-       superhelp.print_output(doc, fmt=args.format, open_browser=getattr(args, "open", False))
+       doc = totalhelp.full_help_from_parser(parser, fmt=args.format)
+       totalhelp.print_output(doc, fmt=args.format, open_browser=getattr(args, "open", False))
        sys.exit(0)
    ```
 4. Ship your CLI unchanged otherwise.
@@ -107,7 +107,7 @@ This preserves your existing structure and avoids base classes or custom `Argume
 * **md**: Markdown document with `#`/`##` headings and fenced code blocks of help output.
 * **html**: Minimal, self-contained HTML with inline CSS suitable for opening directly or publishing. Created as a temp file via `print_output(..., fmt="html")` with optional browser open.
 
-### Rich Integration (`superhelp[rich]`)
+### Rich Integration (`totalhelp[rich]`)
 
 If the extra is installed and the output stream is a TTY, text-mode output may:
 
@@ -183,46 +183,46 @@ HTML output is static; there is no embedded script content.
 
 ```python
 import argparse, sys
-import superhelp
+import totalhelp
 
 def build_parser():
     p = argparse.ArgumentParser(prog="hardcommand")
     subs = p.add_subparsers(dest="cmd")
     a = subs.add_parser("alpha")
     b = subs.add_parser("beta")
-    superhelp.add_totalhelp_flag(p)  # adds --totalhelp/--superhelp, --format, --open
+    totalhelp.add_totalhelp_flag(p)  # adds --totalhelp/--totalhelp, --format, --open
     return p
 
 p = build_parser()
 args = p.parse_args()
 if getattr(args, "totalhelp", False):
-    doc = superhelp.full_help_from_parser(p, fmt=getattr(args, "format", "text"))
-    superhelp.print_output(doc, fmt=getattr(args, "format", "text"), open_browser=getattr(args, "open", False))
+    doc = totalhelp.full_help_from_parser(p, fmt=getattr(args, "format", "text"))
+    totalhelp.print_output(doc, fmt=getattr(args, "format", "text"), open_browser=getattr(args, "open", False))
     sys.exit(0)
 ```
 
 ### Generate docs for README
 
 ```python
-import superhelp
+import totalhelp
 from myapp import build_parser
 
-doc = superhelp.full_help_from_parser(build_parser(), prog="hardcommand", fmt="md")
+doc = totalhelp.full_help_from_parser(build_parser(), prog="hardcommand", fmt="md")
 open("HARDHELP.md", "w", encoding="utf-8").write(doc)
 ```
 
 ### Inspect a third-party tool (heuristic)
 
 ```python
-import superhelp
-print(superhelp.full_help_external(["pip"], fmt="text"))
+import totalhelp
+print(totalhelp.full_help_external(["pip"], fmt="text"))
 ```
 
 ## Packaging and Distribution
 
-* Package name: `superhelp`
-* Extras: `superhelp[rich]` installs `rich` and `rich-argparse`.
-* Optional console script (not required by this PEP): `superhelp` that invokes `full_help_external(sys.argv[1:] or ["python"], ...)`.
+* Package name: `totalhelp`
+* Extras: `totalhelp[rich]` installs `rich` and `rich-argparse`.
+* Optional console script (not required by this PEP): `totalhelp` that invokes `full_help_external(sys.argv[1:] or ["python"], ...)`.
 
 ## Versioning and Evolution
 

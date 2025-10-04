@@ -120,6 +120,7 @@ def _mode_indent(items: list[tuple[int, str]]) -> int | None:
 #                 out.append(choice)
 #     return out
 
+
 def extract_from_named_sections_with_baseline(sections: list[Section]) -> list[str]:
     """
     Accept commands from 'Subcommands'/'Commands' unconditionally (with indent baseline),
@@ -165,6 +166,7 @@ def extract_from_named_sections_with_baseline(sections: list[Section]) -> list[s
             # Otherwise: positional params are NOT subcommands → ignore definition-list items here.
 
     return out
+
 
 # ---------------------------
 # Small utilities (no regex)
@@ -420,8 +422,6 @@ def extract_from_named_sections(sections: List[Section]) -> List[str]:
     return out
 
 
-
-
 def extract_from_all_definition_lists(text: str) -> List[str]:
     """
     Strategy C: Scan *all* lines and collect tokens that look like left-column 'terms'
@@ -468,7 +468,7 @@ class ParseResult:
     evidence: Dict[str, List[str]] = field(default_factory=dict)
 
 
-def find_subcommands(help_text: str,root_command: Optional[str] = None) -> ParseResult:
+def find_subcommands(help_text: str, root_command: Optional[str] = None) -> ParseResult:
     """
     Try multiple strategies, score + merge, then filter.
     """

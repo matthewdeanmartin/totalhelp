@@ -68,26 +68,52 @@ Options:
   -h, --help  Print help information
 """
 
+
 def test_cli_tool_audit_commands():
     res = find_subcommands(CLI_TOOL_AUDIT)
     expect = [
-        "interactive", "freeze", "audit", "single",
-        "read", "create", "update", "delete",
+        "interactive",
+        "freeze",
+        "audit",
+        "single",
+        "read",
+        "create",
+        "update",
+        "delete",
     ]
     for cmd in expect:
         assert cmd in res.subcommands
     # Top few should be those:
     assert res.subcommands[:4] == ["interactive", "freeze", "audit", "single"]
 
+
 def test_pipx_commands():
     res = find_subcommands(PIPX)
     expect = [
-        "install","install-all","uninject","inject","pin","unpin","upgrade","upgrade-all",
-        "upgrade-shared","uninstall","uninstall-all","reinstall","reinstall-all","list",
-        "interpreter","run","runpip","ensurepath","environment","completions",
+        "install",
+        "install-all",
+        "uninject",
+        "inject",
+        "pin",
+        "unpin",
+        "upgrade",
+        "upgrade-all",
+        "upgrade-shared",
+        "uninstall",
+        "uninstall-all",
+        "reinstall",
+        "reinstall-all",
+        "list",
+        "interpreter",
+        "run",
+        "runpip",
+        "ensurepath",
+        "environment",
+        "completions",
     ]
     for cmd in expect:
         assert cmd in res.subcommands
+
 
 def test_wrapped_definition_list_detection():
     res = find_subcommands(WRAPPED_ODD)
