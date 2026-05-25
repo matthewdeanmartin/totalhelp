@@ -116,4 +116,6 @@ include = [
     "/README.md", "LICENSE",
 ]
 [tool.uv]
+
+[tool.uv.pip]
 universal = true
