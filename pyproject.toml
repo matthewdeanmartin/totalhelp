@@ -115,3 +115,5 @@ include = [
     "totalhelp/py.typed",
     "/README.md", "LICENSE",
 ]
+[tool.uv]
+universal = true
