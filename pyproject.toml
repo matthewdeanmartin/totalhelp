@@ -18,7 +18,6 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -40,6 +39,11 @@ rich = [
 
 [dependency-groups]
 dev = [
+    "jiggle-version>=2.1.0",
+    "troml-dev-status>=0.6.0; python_version >= '3.9'",
+    "dont-be-lazy>=0.1.2; python_version >= '3.10'",
+    "pydoc-fork>=3.0.0; python_version >= '3.10'",
+
     # "troml; python_version >= '3.10'",
     "bitrab",
     "cli-tool-audit",
