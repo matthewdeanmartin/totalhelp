@@ -49,8 +49,7 @@ def _render_md(nodes: List[_ParserNode], prog: str) -> str:
 def _render_html(nodes: List[_ParserNode], prog: str) -> str:
     """Render the collected help nodes as a self-contained HTML file."""
     # Minimal, clean CSS for readability.
-    css = textwrap.dedent(
-        """
+    css = textwrap.dedent("""
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; margin: 0; background-color: #f8f9fa; color: #212529; }
         .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         h1, h2, h3 { margin-top: 2rem; margin-bottom: 1rem; color: #343a40; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem; }
@@ -66,8 +65,7 @@ def _render_html(nodes: List[_ParserNode], prog: str) -> str:
         nav li { display: inline-block; margin-right: 1rem; }
         nav a { color: #adb5bd; text-decoration: none; }
         nav a:hover { color: white; }
-    """
-    )
+    """)
 
     body_parts = []
     toc_parts = ["<ul>"]
@@ -96,8 +94,7 @@ def _render_html(nodes: List[_ParserNode], prog: str) -> str:
     toc = "".join(toc_parts)
     body = "".join(body_parts)
 
-    return textwrap.dedent(
-        f"""
+    return textwrap.dedent(f"""
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -117,5 +114,4 @@ def _render_html(nodes: List[_ParserNode], prog: str) -> str:
             </div>
         </body>
         </html>
-    """
-    ).strip()
+    """).strip()

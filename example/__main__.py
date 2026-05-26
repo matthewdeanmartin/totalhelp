@@ -1,6 +1,7 @@
 """
 An example command-line application demonstrating how to integrate `totalhelp`.
 """
+
 import argparse
 import sys
 
@@ -16,7 +17,9 @@ def create_parser() -> argparse.ArgumentParser:
         description="A pretend Git CLI to demonstrate totalhelp.",
         epilog="Thanks for using our fake tool!",
     )
-    subparsers = parser.add_subparsers(dest="command", title="Available Commands", required=True)
+    subparsers = parser.add_subparsers(
+        dest="command", title="Available Commands", required=True
+    )
 
     # --- 'remote' command with its own subcommands ---
     remote_parser = subparsers.add_parser(
@@ -78,14 +81,13 @@ def main():
     if getattr(args, "totalhelp", False):
         # Generate the monolithic help document
         doc = totalhelp.full_help_from_parser(
-            parser,
-            fmt=getattr(args, "format", "text")
+            parser, fmt=getattr(args, "format", "text")
         )
         # Print it using the helper (which handles HTML file creation)
         totalhelp.print_output(
             doc,
             fmt=getattr(args, "format", "text"),
-            open_browser=getattr(args, "open", False)
+            open_browser=getattr(args, "open", False),
         )
         # Exit cleanly
         sys.exit(0)
