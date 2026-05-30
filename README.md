@@ -129,3 +129,10 @@ python my_cli.py --totalhelp --format md > DOCS.md
 ```bash
 python my_cli.py --totalhelp --format html --open
 ```
+
+## Project Links
+
+- [GitHub](https://github.com/matthewdeanmartin/totalhelp)
+- [PyPI](https://pypi.org/project/totalhelp/)
+- [Bug Tracker](https://github.com/matthewdeanmartin/totalhelp/issues)
+- [Change Log](https://github.com/matthewdeanmartin/totalhelp/blob/main/CHANGELOG.md)
