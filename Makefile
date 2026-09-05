@@ -83,7 +83,7 @@ bandit: .build_history/bandit
 # for when using -j (jobs, run in parallel)
 .NOTPARALLEL: .build_history/isort .build_history/black
 
-check: mypy test pylint bandit
+check: mypy test pylint bandit check-dist
 
 #.PHONY: publish_test
 #publish_test:
@@ -155,3 +155,42 @@ dont-be-lazy:
 .PHONY: pydoc-docs
 pydoc-docs:
 	@uv run pydoc_fork totalhelp -o ./pydoc/
+
+# ── Distribution verification ────────────────────────────────────────────────
+
+.PHONY: check-dist
+check-dist:
+	@echo "Building and verifying distributions"
+	@rm -rf .build
+	@uv build --out-dir .build
+	@$(VENV) python scripts/verify_distribution.py .build
+
+# ── Python 3.15 trial environment ────────────────────────────────────────────
+# Kept separate from .venv so the normal dev environment is never clobbered.
+# NOTE: do not use $(CURDIR) in PATH here -- on Windows it expands to a
+# drive-lettered path (C:/github/totalhelp) whose colon silently splits PATH.
+
+PY315     := 3.15.0rc2
+VENV315   := .venv315rc2
+PY315_EXE := $(VENV315)/Scripts/python.exe
+
+.PHONY: venv315
+venv315:
+	@test -x $(PY315_EXE) || uv venv $(VENV315) --python $(PY315)
+	@uv pip install -e . pytest pytest-cov pytest-mock pytest-timeout pytest-xdist 		--python $(PY315_EXE) --quiet
+	@$(PY315_EXE) --version
+
+.PHONY: venv315-clean
+venv315-clean:
+	@rm -rf $(VENV315)
+
+.PHONY: test315
+test315: venv315
+	@echo "Running unit tests on Python 3.15"
+	@$(PY315_EXE) -m pytest test -q --timeout=60 -p no:randomly
+
+.PHONY: check315
+check315: test315
+	@echo "Import audit on Python 3.15 (warnings are errors)"
+	@$(PY315_EXE) -W error -c "import totalhelp, totalhelp.__main__, totalhelp.library, totalhelp.parser, totalhelp.ui, totalhelp.external"
+	@echo "Python 3.15 checks passed."

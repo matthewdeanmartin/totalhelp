@@ -121,3 +121,71 @@ def test_wrapped_definition_list_detection():
     assert "jump" in res.subcommands
     # 'help' might be filtered; ensure the real commands survived
     assert res.subcommands[0] in ("walk", "jump")
+
+
+# ---------------------------------------------------------------------------
+# Live-argparse round-trip tests.
+#
+# The fixtures above are *frozen* strings captured from older Pythons. They
+# prove the heuristics still parse historical output, but they cannot catch a
+# change in how the running interpreter's argparse formats help.
+#
+# Python 3.15 changed argparse's *error* strings (it now appends
+# "maybe you meant 'x'?" to "invalid choice:"). totalhelp only ever parses
+# ``--help`` output, never error output, so it is unaffected -- but that is a
+# property worth pinning down with a test rather than leaving to inspection.
+# ---------------------------------------------------------------------------
+import argparse
+
+from totalhelp.library import full_help_from_parser
+
+
+def _live_parser() -> argparse.ArgumentParser:
+    """A parser built by the *running* interpreter's argparse."""
+    parser = argparse.ArgumentParser(prog="tool", description="Live tool.")
+    parser.add_argument("--level", choices=["low", "mid", "high"], help="Level")
+    subs = parser.add_subparsers(dest="cmd")
+    for name in ("install", "uninstall", "freeze", "audit", "single"):
+        subs.add_parser(name, help=f"{name} things")
+    return parser
+
+
+def test_find_subcommands_on_live_argparse_help():
+    """Discovery must work against help text this interpreter actually emits."""
+    result = find_subcommands(_live_parser().format_help(), root_command="tool")
+    assert set(result.subcommands) == {
+        "install",
+        "uninstall",
+        "freeze",
+        "audit",
+        "single",
+    }
+
+
+def test_find_subcommands_ignores_option_choices():
+    """`--level {low,mid,high}` must not be mistaken for subcommands."""
+    result = find_subcommands(_live_parser().format_help(), root_command="tool")
+    for not_a_command in ("low", "mid", "high"):
+        assert not_a_command not in result.subcommands
+
+
+def test_nested_live_help_renders_every_node():
+    """The rendered document must contain a section per parser in the tree."""
+    parser = _live_parser()
+    doc = full_help_from_parser(parser, fmt="text", use_rich=False)
+    for name in ("install", "uninstall", "freeze", "audit", "single"):
+        assert f"$ tool {name} --help" in doc
+
+
+def test_error_text_is_never_parsed_for_subcommands():
+    """
+    Python 3.15 appends "maybe you meant 'x'?" to argparse's invalid-choice
+    error. Feeding such a message to the discovery heuristics must not produce
+    bogus subcommands (totalhelp never does this, but the parser is public).
+    """
+    message = (
+        "tool: error: argument cmd: invalid choice: 'instll', "
+        "maybe you meant 'install'? (choose from 'install', 'freeze')"
+    )
+    result = find_subcommands(message, root_command="tool")
+    assert result.subcommands == []
