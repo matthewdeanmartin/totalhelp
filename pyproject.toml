@@ -47,8 +47,8 @@ dev = [
     # The [all] extra pulls google-re2, which has no cp315 wheel and fails to
     # build on Windows (missing absl headers). The base package is pure Python
     # and still provides the `kaclm` CLI this repo actually uses.
-    "keepachangelog-manager-fork[all]>=6.6.0; python_version >= '3.9' and python_version < '3.15'",
-    "keepachangelog-manager-fork>=6.6.0; python_version >= '3.15'",
+    "keepachangelog-manager-fork[fast]>=6.8.0; python_version >= '3.9' and python_version < '3.15'",
+    "keepachangelog-manager-fork[stdlib]>=6.8.0; python_version >= '3.15'",
     "troml-dev-status>=0.6.0; python_version >= '3.9'",
     "dont-be-lazy>=0.1.2; python_version >= '3.10'",
     "pydoc-fork>=3.0.0; python_version >= '3.10'",
