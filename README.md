@@ -136,3 +136,10 @@ python my_cli.py --totalhelp --format html --open
 - [PyPI](https://pypi.org/project/totalhelp/)
 - [Bug Tracker](https://github.com/matthewdeanmartin/totalhelp/issues)
 - [Change Log](https://github.com/matthewdeanmartin/totalhelp/blob/main/CHANGELOG.md)
+
+
+## Python 3.15 verification — 2026-10-04
+
+15 tests pass on 3.15.0rc3 with stable/prerelease dependencies and Python 3.14.7. Installed-wheel import and CLI help pass. No new runtime fix or fallback was needed. Full developer setup remains blocked by source-only linkcheckmd; prior claims that the entire dev group is wheel-installable are superseded.
+
+Dependencies were installed only from published wheels; the project's own pure-Python wheel was built locally without build isolation. `uv lock --upgrade` refreshed the lock. No GitHub builds, releases or upstream reports were sent. Upstream bug filing is the human operator's job.
