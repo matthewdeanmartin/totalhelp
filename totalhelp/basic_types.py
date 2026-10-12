@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import argparse
-from typing import Literal, NamedTuple, Tuple
+from typing import Literal, NamedTuple
 
 
 class _ParserNode(NamedTuple):
     """Internal representation of a parser in the tree."""
 
-    path: Tuple[str, ...]
+    path: tuple[str, ...]
     parser: argparse.ArgumentParser
 
 

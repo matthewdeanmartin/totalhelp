@@ -3,13 +3,13 @@ from __future__ import annotations
 import argparse
 import io
 import textwrap
-from typing import IO, List, Optional
+from typing import IO
 
 from totalhelp.basic_types import _ParserNode
 
 
 def _get_help_string(
-    parser: argparse.ArgumentParser, file: Optional[IO[str]] = None
+    parser: argparse.ArgumentParser, file: IO[str] | None = None
 ) -> str:
     """Capture help output from a parser instance."""
     io.StringIO()
@@ -18,9 +18,9 @@ def _get_help_string(
     return parser.format_help()
 
 
-def _render_text(nodes: List[_ParserNode], prog: str) -> str:
+def _render_text(nodes: list[_ParserNode], prog: str) -> str:
     """Render the collected help nodes as plain text."""
-    output: List[str] = []
+    output: list[str] = []
     for i, node in enumerate(nodes):
         path_str = " ".join((prog,) + node.path)
         title = f"$ {path_str} --help"
@@ -32,9 +32,9 @@ def _render_text(nodes: List[_ParserNode], prog: str) -> str:
     return "\n".join(output)
 
 
-def _render_md(nodes: List[_ParserNode], prog: str) -> str:
+def _render_md(nodes: list[_ParserNode], prog: str) -> str:
     """Render the collected help nodes as Markdown."""
-    output: List[str] = [f"# Help for `{prog}`\n"]
+    output: list[str] = [f"# Help for `{prog}`\n"]
     for node in nodes:
         path_str = " ".join((prog,) + node.path)
         level = len(node.path) + 2  # ## for top-level, ### for next, etc.
@@ -46,7 +46,7 @@ def _render_md(nodes: List[_ParserNode], prog: str) -> str:
     return "\n".join(output)
 
 
-def _render_html(nodes: List[_ParserNode], prog: str) -> str:
+def _render_html(nodes: list[_ParserNode], prog: str) -> str:
     """Render the collected help nodes as a self-contained HTML file."""
     # Minimal, clean CSS for readability.
     css = textwrap.dedent("""

@@ -6,7 +6,7 @@ authors = [
 ]
 description = "Print help for all commands and subcommands for argparse applications"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 # Pin license files explicitly so the build never falls back to hatchling's
 # default glob, which walks non-gitignored dirs and sweeps up dependency LICENSEs.
 license-files = ["LICENSE"]
@@ -16,9 +16,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -47,16 +44,16 @@ dev = [
     # The [all] extra pulls google-re2, which has no cp315 wheel and fails to
     # build on Windows (missing absl headers). The base package is pure Python
     # and still provides the `kaclm` CLI this repo actually uses.
-    "keepachangelog-manager-fork[fast]>=6.8.0; python_version >= '3.9' and python_version < '3.15'",
+    "keepachangelog-manager-fork[fast]>=6.8.0; python_version < '3.15'",
     "keepachangelog-manager-fork[stdlib]>=6.8.0; python_version >= '3.15'",
-    "troml-dev-status>=0.6.0; python_version >= '3.9'",
-    "dont-be-lazy>=0.1.2; python_version >= '3.10'",
-    "pydoc-fork>=3.0.0; python_version >= '3.10'",
+    "troml-dev-status>=0.6.0",
+    "dont-be-lazy>=0.1.2",
+    "pydoc-fork>=3.0.0",
 
-    # "troml; python_version >= '3.10'",
+    # "troml",
     "bitrab",
     "cli-tool-audit",
-    "git2md; python_version >= '3.10'",
+    "git2md",
     "pyclean; python_version >= '3.12'",
     "strip-docs>=1.0; python_version >= '3.12'",
     "gha-update; python_version >= '3.12'",
@@ -64,39 +61,39 @@ dev = [
     "mkdocs; python_version >= '3.12'",
     "mdformat",
     # plugin finder
-    "packaging; python_version >= '3.8'",
+    "packaging",
     # mpy
-    "mypy; python_version >= '3.8'",
-    # "types-toml; python_version >= '3.8'",
+    "mypy",
+    # "types-toml",
     # reports
 
     # build
-    "vermin; python_version >= '3.8'",
-    "metametameta>=0.1.14; python_version >= '3.9'",
-    "hatchling; python_version >= '3.8'",
-    "ruff>=0.12.0; python_version >= '3.8'",
-    "pylint; python_version >= '3.8'",
-    "bandit; python_version >= '3.8'",
-    "pre-commit; python_version >= '3.8'",
+    "vermin",
+    "metametameta>=0.1.14",
+    "hatchling",
+    "ruff>=0.12.0",
+    "pylint",
+    "bandit",
+    "pre-commit",
     # testing tools
-    "pytest; python_version >= '3.8'",
-    "pytest-cov; python_version >= '3.8'",
-    "pytest-xdist>=3.5.0; python_version >= '3.8'",
-    "pytest-randomly>=3.15.0; python_version >= '3.8'",
-    "pytest-sugar>=0.9.7; python_version >= '3.8'",
-    "pytest-mock; python_version >= '3.8'",
-    "pytest-unused-fixtures; python_version >= '3.10'",
-    "hypothesis[cli]; python_version >= '3.8'",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist>=3.5.0",
+    "pytest-randomly>=3.15.0",
+    "pytest-sugar>=0.9.7",
+    "pytest-mock",
+    "pytest-unused-fixtures",
+    "hypothesis[cli]",
     "detect-test-pollution",
     "pytest-timeout>=2.4.0",
     # docs
-    "interrogate>=1.5.0; python_version >= '3.8'",
-    "pydoctest==0.2.1; python_version >= '3.8'",
-    "pdoc3>=0.5.0; python_version >= '3.8'",
-    "mdformat>=0.5.0; python_version >= '3.8'",
-    "linkcheckmd>=1.4.0; python_version >= '3.8'",
-    "codespell>=2.2.6; python_version >= '3.8'",
-    "pyenchant>=3.2.2; python_version >= '3.8'",
+    "interrogate>=1.5.0",
+    "pydoctest==0.2.1",
+    "pdoc3>=0.5.0",
+    "mdformat>=0.5.0",
+    "linkcheckmd>=1.4.0",
+    "codespell>=2.2.6",
+    "pyenchant>=3.2.2",
 ]
 
 
@@ -147,3 +144,6 @@ schema_version = "current"
 name = "default"
 changelog = "CHANGELOG.md"
 universal = true
+
+[tool.ruff.lint]
+ignore = ["RUF100", "BLE001", "PIE810", "PLW1510", "SIM103"]  # unused noqa differs across Python versions

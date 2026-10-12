@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Optional, Tuple
 
 # --- Add these helpers ---
 
@@ -173,12 +173,12 @@ def extract_from_named_sections_with_baseline(sections: list[Section]) -> list[s
 # ---------------------------
 
 
-def _lines(text: str) -> List[str]:
+def _lines(text: str) -> list[str]:
     """Normalize newlines and return raw lines (keep indentation)."""
     return text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
 
 
-def _rstrip_lines(lines: Iterable[str]) -> List[str]:
+def _rstrip_lines(lines: Iterable[str]) -> list[str]:
     return [ln.rstrip("\n") for ln in lines]
 
 
@@ -231,7 +231,7 @@ def _token_is_optionish(tok: str) -> bool:
     return tok.lower() in meta
 
 
-def _first_word_if_defitem(line: str) -> Optional[str]:
+def _first_word_if_defitem(line: str) -> str | None:
     """
     Return the 'term' of a definition-list style item:
        "  token    description..."
@@ -283,7 +283,7 @@ def _strip_square_groups(s: str) -> str:
     return "".join(out)
 
 
-def _brace_choices(s: str) -> List[str]:
+def _brace_choices(s: str) -> list[str]:
     """
     Extract a single {a,b,c} group (first one) and split on commas (ignores spaces).
     """
@@ -318,10 +318,10 @@ def _brace_choices(s: str) -> List[str]:
 @dataclass
 class Section:
     title: str
-    lines: List[str] = field(default_factory=list)
+    lines: list[str] = field(default_factory=list)
 
 
-def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
+def _sectionize(text: str) -> tuple[list[str] | None, list[Section]]:
     """
     Split help text into:
       - a 'usage block' (list of lines) if present
@@ -331,8 +331,8 @@ def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
     lines = _lines(text)
     lines = _rstrip_lines(lines)
 
-    usage_block: Optional[List[str]] = None
-    sections: List[Section] = []
+    usage_block: list[str] | None = None
+    sections: list[Section] = []
 
     i = 0
     # 1) usage block: contiguous lines starting with 'usage:' and its wrapped lines
@@ -371,7 +371,7 @@ def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
         if _is_heading(lines[j]):
             title = lines[j].strip()[:-1]  # strip trailing ':'
             k = j + 1
-            body: List[str] = []
+            body: list[str] = []
             while k < len(lines) and not _is_heading(lines[k]):
                 body.append(lines[k])
                 k += 1
@@ -388,7 +388,7 @@ def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
 # ---------------------------
 
 
-def extract_from_usage(usage_lines: Optional[List[str]]) -> List[str]:
+def extract_from_usage(usage_lines: list[str] | None) -> list[str]:
     """
     Strategy A: Parse {a,b,c} from usage.
     """
@@ -401,13 +401,13 @@ def extract_from_usage(usage_lines: Optional[List[str]]) -> List[str]:
     return _brace_choices(single)
 
 
-def extract_from_named_sections(sections: List[Section]) -> List[str]:
+def extract_from_named_sections(sections: list[Section]) -> list[str]:
     """
     Strategy B: From sections named like 'Subcommands', 'Commands', 'Positional arguments'
     we parse definition-list styled items. We don't trust words inside braces here.
     """
     wanted = {"subcommands", "commands", "available commands", "positional arguments"}
-    out: List[str] = []
+    out: list[str] = []
     for sec in sections:
         if sec.title.strip().lower() in wanted:
             for ln in sec.lines:
@@ -422,12 +422,12 @@ def extract_from_named_sections(sections: List[Section]) -> List[str]:
     return out
 
 
-def extract_from_all_definition_lists(text: str) -> List[str]:
+def extract_from_all_definition_lists(text: str) -> list[str]:
     """
     Strategy C: Scan *all* lines and collect tokens that look like left-column 'terms'
     in definition lists. This often finds commands even when sections are oddly named.
     """
-    out: List[str] = []
+    out: list[str] = []
     for ln in _lines(text):
         tok = _first_word_if_defitem(ln)
         if tok and tok not in out:
@@ -435,12 +435,12 @@ def extract_from_all_definition_lists(text: str) -> List[str]:
     return out
 
 
-def extract_frequency_candidates(text: str) -> List[str]:
+def extract_frequency_candidates(text: str) -> list[str]:
     """
     Strategy D (weak but helpful): collect first words of many indented lines and
     score by frequency, filtering optionish. Useful for weird/non-argparse helps.
     """
-    counts: Dict[str, int] = {}
+    counts: dict[str, int] = {}
     for ln in _lines(text):
         if _leading_spaces(ln) == 0:
             continue
@@ -464,11 +464,11 @@ def extract_frequency_candidates(text: str) -> List[str]:
 
 @dataclass
 class ParseResult:
-    subcommands: List[str]
-    evidence: Dict[str, List[str]] = field(default_factory=dict)
+    subcommands: list[str]
+    evidence: dict[str, list[str]] = field(default_factory=dict)
 
 
-def find_subcommands(help_text: str, root_command: Optional[str] = None) -> ParseResult:
+def find_subcommands(help_text: str, root_command: str | None = None) -> ParseResult:
     """
     Try multiple strategies, score + merge, then filter.
     """
@@ -480,10 +480,10 @@ def find_subcommands(help_text: str, root_command: Optional[str] = None) -> Pars
 
     # Score/merge: A and B are higher-confidence than C, which is higher than D.
     weights = {id_: w for id_, w in zip("ABC", (3, 3, 2))}
-    score: Dict[str, int] = {}
-    order: List[str] = []  # preserve first-seen ordering across strategies
+    score: dict[str, int] = {}
+    order: list[str] = []  # preserve first-seen ordering across strategies
 
-    def add_all(lst: List[str], w: int):
+    def add_all(lst: list[str], w: int):
         for tok in lst:
             if tok not in order:
                 order.append(tok)

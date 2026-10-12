@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import subprocess  # nosec
-from typing import Callable, Dict, List, Mapping, Optional, Tuple
+from collections.abc import Callable, Mapping
 
 from totalhelp.basic_types import FormatType, _ParserNode
 from totalhelp.parser import find_subcommands
@@ -10,12 +10,12 @@ from totalhelp.ui import _render_html, _render_md, _render_text
 
 
 def full_help_external(
-    command: List[str],
+    command: list[str],
     fmt: FormatType = "text",
     *,
     timeout: float = 5.0,
     max_depth: int = 4,
-    env: Optional[Dict[str, str]] = None,
+    env: dict[str, str] | None = None,
 ) -> str:
     """
     Best-effort external discovery of a command's help structure.
@@ -45,8 +45,8 @@ def full_help_external(
         def format_help(self) -> str:
             return self._help_text
 
-    nodes: List[_ParserNode] = []
-    q: List[Tuple[Tuple[str, ...], List[str]]] = [((), command)]  # (path, full_command)
+    nodes: list[_ParserNode] = []
+    q: list[tuple[tuple[str, ...], list[str]]] = [((), command)]  # (path, full_command)
     visited_paths = set()
     prog = command[0]
 

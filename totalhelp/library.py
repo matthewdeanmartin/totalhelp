@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import io
 import sys
-from typing import Callable, Iterable, Mapping, Optional
+from collections.abc import Callable, Iterable, Mapping
 
 from totalhelp.basic_types import FormatType, _ParserNode
 from totalhelp.ui import _render_html, _render_md, _render_text
@@ -68,7 +68,7 @@ def add_totalhelp_flag(
 
 
 def _walk_parser_tree(
-    root_parser: argparse.ArgumentParser, prog: Optional[str] = None
+    root_parser: argparse.ArgumentParser, prog: str | None = None
 ) -> Iterable[_ParserNode]:
     """
     Recursively walk the parser and its subparsers.
@@ -105,11 +105,11 @@ def _walk_parser_tree(
 
 def full_help_from_parser(
     parser: argparse.ArgumentParser,
-    prog: Optional[str] = None,
+    prog: str | None = None,
     fmt: FormatType = "text",
     *,
-    use_rich: Optional[bool] = True,
-    width: Optional[int] = None,
+    use_rich: bool | None = True,
+    width: int | None = None,
 ) -> str:
     """
     Traverses a parser and all nested subparsers to produce a single help document.

@@ -5,8 +5,8 @@ from __future__ import annotations
 import argparse
 import tarfile
 import zipfile
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, Set
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_ROOT = PROJECT_ROOT / "totalhelp"
@@ -17,7 +17,7 @@ IGNORED_DIR_PARTS = {"__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache
 IGNORED_SUFFIXES = {".pyc", ".pyo", ".pyd"}
 
 
-def source_files(root: Path, pattern: str = "*") -> Set[str]:
+def source_files(root: Path, pattern: str = "*") -> set[str]:
     """Return archive-style paths for files below the project root."""
     return {
         path.relative_to(PROJECT_ROOT).as_posix()
@@ -28,13 +28,13 @@ def source_files(root: Path, pattern: str = "*") -> Set[str]:
     }
 
 
-def wheel_files(path: Path) -> Set[str]:
+def wheel_files(path: Path) -> set[str]:
     """Return the paths stored in a wheel."""
     with zipfile.ZipFile(path) as archive:
         return set(archive.namelist())
 
 
-def sdist_files(path: Path) -> Set[str]:
+def sdist_files(path: Path) -> set[str]:
     """Return sdist paths with the archive's project directory removed."""
     with tarfile.open(path, mode="r:*") as archive:
         files = set()
@@ -47,7 +47,7 @@ def sdist_files(path: Path) -> Set[str]:
         return files
 
 
-def require_files(artifact: Path, expected: Iterable[str], actual: Set[str]) -> None:
+def require_files(artifact: Path, expected: Iterable[str], actual: set[str]) -> None:
     """Fail with a useful list when an artifact omits expected files."""
     missing = sorted(set(expected) - actual)
     if missing:
@@ -57,9 +57,13 @@ def require_files(artifact: Path, expected: Iterable[str], actual: Set[str]) -> 
         )
 
 
-def reject_files(artifact: Path, actual: Set[str], unwanted_parts: Iterable[str]) -> None:
+def reject_files(
+    artifact: Path, actual: set[str], unwanted_parts: Iterable[str]
+) -> None:
     """Fail when an artifact carries files it should never ship."""
-    bad = sorted(name for name in actual if any(part in name for part in unwanted_parts))
+    bad = sorted(
+        name for name in actual if any(part in name for part in unwanted_parts)
+    )
     if bad:
         formatted = "\n".join(f"  - {name}" for name in bad[:20])
         raise RuntimeError(
