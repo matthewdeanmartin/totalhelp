@@ -67,7 +67,7 @@ bandit:
 .PHONY: pylint
 pylint: isort black
 	@echo "Linting with pylint"
-	$(VENV) ruff check --fix
+	$(VENV) ruff check --fix totalhelp
 	# pylint never actually ran here while targets were stamp files; this is today's score, ratchet it up.
 	$(VENV) pylint totalhelp --fail-under 9.5
 
