@@ -194,3 +194,6 @@ check315: test315
 	@echo "Import audit on Python 3.15 (warnings are errors)"
 	@$(PY315_EXE) -W error -c "import totalhelp, totalhelp.__main__, totalhelp.library, totalhelp.parser, totalhelp.ui, totalhelp.external"
 	@echo "Python 3.15 checks passed."
+
+# `test` is also a directory in this repo; without .PHONY make can call the target up to date and skip it.
+.PHONY: test
