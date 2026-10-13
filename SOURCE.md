@@ -15,13 +15,13 @@
 from __future__ import annotations
 
 import argparse
-from typing import Literal, NamedTuple, Tuple
+from typing import Literal, NamedTuple
 
 
 class _ParserNode(NamedTuple):
     """Internal representation of a parser in the tree."""
 
-    path: Tuple[str, ...]
+    path: tuple[str, ...]
     parser: argparse.ArgumentParser
 
 
@@ -34,7 +34,7 @@ from __future__ import annotations
 
 import argparse
 import subprocess  # nosec
-from typing import Callable, Dict, List, Mapping, Optional, Tuple
+from collections.abc import Callable, Mapping
 
 from totalhelp.basic_types import FormatType, _ParserNode
 from totalhelp.parser import find_subcommands
@@ -42,12 +42,12 @@ from totalhelp.ui import _render_html, _render_md, _render_text
 
 
 def full_help_external(
-    command: List[str],
+    command: list[str],
     fmt: FormatType = "text",
     *,
     timeout: float = 5.0,
     max_depth: int = 4,
-    env: Optional[Dict[str, str]] = None,
+    env: dict[str, str] | None = None,
 ) -> str:
     """
     Best-effort external discovery of a command's help structure.
@@ -77,8 +77,8 @@ def full_help_external(
         def format_help(self) -> str:
             return self._help_text
 
-    nodes: List[_ParserNode] = []
-    q: List[Tuple[Tuple[str, ...], List[str]]] = [((), command)]  # (path, full_command)
+    nodes: list[_ParserNode] = []
+    q: list[tuple[tuple[str, ...], list[str]]] = [((), command)]  # (path, full_command)
     visited_paths = set()
     prog = command[0]
 
@@ -146,7 +146,7 @@ from __future__ import annotations
 import argparse
 import io
 import sys
-from typing import Callable, Iterable, Mapping, Optional
+from collections.abc import Callable, Iterable, Mapping
 
 from totalhelp.basic_types import FormatType, _ParserNode
 from totalhelp.ui import _render_html, _render_md, _render_text
@@ -209,7 +209,7 @@ def add_totalhelp_flag(
 
 
 def _walk_parser_tree(
-    root_parser: argparse.ArgumentParser, prog: Optional[str] = None
+    root_parser: argparse.ArgumentParser, prog: str | None = None
 ) -> Iterable[_ParserNode]:
     """
     Recursively walk the parser and its subparsers.
@@ -246,11 +246,11 @@ def _walk_parser_tree(
 
 def full_help_from_parser(
     parser: argparse.ArgumentParser,
-    prog: Optional[str] = None,
+    prog: str | None = None,
     fmt: FormatType = "text",
     *,
-    use_rich: Optional[bool] = True,
-    width: Optional[int] = None,
+    use_rich: bool | None = True,
+    width: int | None = None,
 ) -> str:
     """
     Traverses a parser and all nested subparsers to produce a single help document.
@@ -305,8 +305,8 @@ def full_help_from_parser(
 ```python
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Optional, Tuple
 
 # --- Add these helpers ---
 
@@ -478,12 +478,12 @@ def extract_from_named_sections_with_baseline(sections: list[Section]) -> list[s
 # ---------------------------
 
 
-def _lines(text: str) -> List[str]:
+def _lines(text: str) -> list[str]:
     """Normalize newlines and return raw lines (keep indentation)."""
     return text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
 
 
-def _rstrip_lines(lines: Iterable[str]) -> List[str]:
+def _rstrip_lines(lines: Iterable[str]) -> list[str]:
     return [ln.rstrip("\n") for ln in lines]
 
 
@@ -536,7 +536,7 @@ def _token_is_optionish(tok: str) -> bool:
     return tok.lower() in meta
 
 
-def _first_word_if_defitem(line: str) -> Optional[str]:
+def _first_word_if_defitem(line: str) -> str | None:
     """
     Return the 'term' of a definition-list style item:
        "  token    description..."
@@ -588,7 +588,7 @@ def _strip_square_groups(s: str) -> str:
     return "".join(out)
 
 
-def _brace_choices(s: str) -> List[str]:
+def _brace_choices(s: str) -> list[str]:
     """
     Extract a single {a,b,c} group (first one) and split on commas (ignores spaces).
     """
@@ -623,10 +623,10 @@ def _brace_choices(s: str) -> List[str]:
 @dataclass
 class Section:
     title: str
-    lines: List[str] = field(default_factory=list)
+    lines: list[str] = field(default_factory=list)
 
 
-def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
+def _sectionize(text: str) -> tuple[list[str] | None, list[Section]]:
     """
     Split help text into:
       - a 'usage block' (list of lines) if present
@@ -636,8 +636,8 @@ def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
     lines = _lines(text)
     lines = _rstrip_lines(lines)
 
-    usage_block: Optional[List[str]] = None
-    sections: List[Section] = []
+    usage_block: list[str] | None = None
+    sections: list[Section] = []
 
     i = 0
     # 1) usage block: contiguous lines starting with 'usage:' and its wrapped lines
@@ -676,7 +676,7 @@ def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
         if _is_heading(lines[j]):
             title = lines[j].strip()[:-1]  # strip trailing ':'
             k = j + 1
-            body: List[str] = []
+            body: list[str] = []
             while k < len(lines) and not _is_heading(lines[k]):
                 body.append(lines[k])
                 k += 1
@@ -693,7 +693,7 @@ def _sectionize(text: str) -> Tuple[Optional[List[str]], List[Section]]:
 # ---------------------------
 
 
-def extract_from_usage(usage_lines: Optional[List[str]]) -> List[str]:
+def extract_from_usage(usage_lines: list[str] | None) -> list[str]:
     """
     Strategy A: Parse {a,b,c} from usage.
     """
@@ -706,13 +706,13 @@ def extract_from_usage(usage_lines: Optional[List[str]]) -> List[str]:
     return _brace_choices(single)
 
 
-def extract_from_named_sections(sections: List[Section]) -> List[str]:
+def extract_from_named_sections(sections: list[Section]) -> list[str]:
     """
     Strategy B: From sections named like 'Subcommands', 'Commands', 'Positional arguments'
     we parse definition-list styled items. We don't trust words inside braces here.
     """
     wanted = {"subcommands", "commands", "available commands", "positional arguments"}
-    out: List[str] = []
+    out: list[str] = []
     for sec in sections:
         if sec.title.strip().lower() in wanted:
             for ln in sec.lines:
@@ -727,12 +727,12 @@ def extract_from_named_sections(sections: List[Section]) -> List[str]:
     return out
 
 
-def extract_from_all_definition_lists(text: str) -> List[str]:
+def extract_from_all_definition_lists(text: str) -> list[str]:
     """
     Strategy C: Scan *all* lines and collect tokens that look like left-column 'terms'
     in definition lists. This often finds commands even when sections are oddly named.
     """
-    out: List[str] = []
+    out: list[str] = []
     for ln in _lines(text):
         tok = _first_word_if_defitem(ln)
         if tok and tok not in out:
@@ -740,12 +740,12 @@ def extract_from_all_definition_lists(text: str) -> List[str]:
     return out
 
 
-def extract_frequency_candidates(text: str) -> List[str]:
+def extract_frequency_candidates(text: str) -> list[str]:
     """
     Strategy D (weak but helpful): collect first words of many indented lines and
     score by frequency, filtering optionish. Useful for weird/non-argparse helps.
     """
-    counts: Dict[str, int] = {}
+    counts: dict[str, int] = {}
     for ln in _lines(text):
         if _leading_spaces(ln) == 0:
             continue
@@ -769,11 +769,11 @@ def extract_frequency_candidates(text: str) -> List[str]:
 
 @dataclass
 class ParseResult:
-    subcommands: List[str]
-    evidence: Dict[str, List[str]] = field(default_factory=dict)
+    subcommands: list[str]
+    evidence: dict[str, list[str]] = field(default_factory=dict)
 
 
-def find_subcommands(help_text: str, root_command: Optional[str] = None) -> ParseResult:
+def find_subcommands(help_text: str, root_command: str | None = None) -> ParseResult:
     """
     Try multiple strategies, score + merge, then filter.
     """
@@ -785,10 +785,10 @@ def find_subcommands(help_text: str, root_command: Optional[str] = None) -> Pars
 
     # Score/merge: A and B are higher-confidence than C, which is higher than D.
     weights = {id_: w for id_, w in zip("ABC", (3, 3, 2))}
-    score: Dict[str, int] = {}
-    order: List[str] = []  # preserve first-seen ordering across strategies
+    score: dict[str, int] = {}
+    order: list[str] = []  # preserve first-seen ordering across strategies
 
-    def add_all(lst: List[str], w: int):
+    def add_all(lst: list[str], w: int):
         for tok in lst:
             if tok not in order:
                 order.append(tok)
@@ -831,13 +831,13 @@ from __future__ import annotations
 import argparse
 import io
 import textwrap
-from typing import IO, List, Optional
+from typing import IO
 
 from totalhelp.basic_types import _ParserNode
 
 
 def _get_help_string(
-    parser: argparse.ArgumentParser, file: Optional[IO[str]] = None
+    parser: argparse.ArgumentParser, file: IO[str] | None = None
 ) -> str:
     """Capture help output from a parser instance."""
     io.StringIO()
@@ -846,9 +846,9 @@ def _get_help_string(
     return parser.format_help()
 
 
-def _render_text(nodes: List[_ParserNode], prog: str) -> str:
+def _render_text(nodes: list[_ParserNode], prog: str) -> str:
     """Render the collected help nodes as plain text."""
-    output: List[str] = []
+    output: list[str] = []
     for i, node in enumerate(nodes):
         path_str = " ".join((prog,) + node.path)
         title = f"$ {path_str} --help"
@@ -860,9 +860,9 @@ def _render_text(nodes: List[_ParserNode], prog: str) -> str:
     return "\n".join(output)
 
 
-def _render_md(nodes: List[_ParserNode], prog: str) -> str:
+def _render_md(nodes: list[_ParserNode], prog: str) -> str:
     """Render the collected help nodes as Markdown."""
-    output: List[str] = [f"# Help for `{prog}`\n"]
+    output: list[str] = [f"# Help for `{prog}`\n"]
     for node in nodes:
         path_str = " ".join((prog,) + node.path)
         level = len(node.path) + 2  # ## for top-level, ### for next, etc.
@@ -874,11 +874,10 @@ def _render_md(nodes: List[_ParserNode], prog: str) -> str:
     return "\n".join(output)
 
 
-def _render_html(nodes: List[_ParserNode], prog: str) -> str:
+def _render_html(nodes: list[_ParserNode], prog: str) -> str:
     """Render the collected help nodes as a self-contained HTML file."""
     # Minimal, clean CSS for readability.
-    css = textwrap.dedent(
-        """
+    css = textwrap.dedent("""
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; margin: 0; background-color: #f8f9fa; color: #212529; }
         .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         h1, h2, h3 { margin-top: 2rem; margin-bottom: 1rem; color: #343a40; border-bottom: 1px solid #dee2e6; padding-bottom: 0.5rem; }
@@ -894,8 +893,7 @@ def _render_html(nodes: List[_ParserNode], prog: str) -> str:
         nav li { display: inline-block; margin-right: 1rem; }
         nav a { color: #adb5bd; text-decoration: none; }
         nav a:hover { color: white; }
-    """
-    )
+    """)
 
     body_parts = []
     toc_parts = ["<ul>"]
@@ -924,8 +922,7 @@ def _render_html(nodes: List[_ParserNode], prog: str) -> str:
     toc = "".join(toc_parts)
     body = "".join(body_parts)
 
-    return textwrap.dedent(
-        f"""
+    return textwrap.dedent(f"""
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -945,30 +942,33 @@ def _render_html(nodes: List[_ParserNode], prog: str) -> str:
             </div>
         </body>
         </html>
-    """
-    ).strip()
+    """).strip()
 ```
 ## File: __about__.py
 ```python
 """Metadata for totalhelp."""
 
 __all__ = [
-    "__title__",
-    "__version__",
+    "__credits__",
+    "__dependencies__",
     "__description__",
     "__readme__",
     "__requires_python__",
     "__status__",
+    "__title__",
+    "__version__",
 ]
 
 __title__ = "totalhelp"
 __version__ = "0.1.1"
+__credits__ = [{"name": "Matthew Dean Martin", "email": "matthewdeanmartin@gmail.com"}]
 __description__ = (
     "Print help for all commands and subcommands for argparse applications"
 )
 __readme__ = "README.md"
-__requires_python__ = ">=3.8"
+__requires_python__ = ">=3.11"
 __status__ = "1 - Planning"
+__dependencies__ = ["rich>=10.0.0", "rich-argparse>=1.0.0"]
 ```
 ## File: __main__.py
 ```python
