@@ -1,0 +1,10 @@
+baseURL = "https://matthewdeanmartin.github.io/totalhelp/"
+locale = "en-us"
+title = "totalhelp"
+disableKinds = ["taxonomy", "term", "RSS"]
+
+[params]
+description = "One complete help document for every command in an argparse CLI."
+docs = "https://totalhelp.readthedocs.io/en/latest/"
+github = "https://github.com/matthewdeanmartin/totalhelp"
+pypi = "https://pypi.org/project/totalhelp/"

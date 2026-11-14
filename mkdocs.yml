@@ -1,0 +1,19 @@
+site_name: totalhelp
+site_url: https://totalhelp.readthedocs.io/
+site_description: One help document for an argparse command tree.
+repo_url: https://github.com/matthewdeanmartin/totalhelp
+edit_uri: edit/main/docs/
+
+theme:
+  name: readthedocs
+
+nav:
+  - Overview: index.md
+  - Integrate with argparse: integration.md
+  - Inspect another CLI: external.md
+  - Draft PEP: PEP.md
+
+validation:
+  links:
+    unrecognized_links: warn
+    anchors: warn

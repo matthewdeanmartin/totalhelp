@@ -98,7 +98,7 @@ make_docs:
 	pdoc totalhelp --html -o docs --force
 
 check_md:
-	$(VENV) linkcheckMarkdown README.md
+	$(VENV) mkdocs build --strict
 	$(VENV) markdownlint README.md --config .markdownlintrc
 	$(VENV) mdformat README.md docs/*.md
 

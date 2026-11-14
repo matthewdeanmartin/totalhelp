@@ -211,3 +211,6 @@ __marimo__/
 # Trial venvs / build dirs (python 3.15 upgrade)
 .venv*/
 .build/
+landing/public/
+landing/resources/
+landing/.hugo_build.lock
